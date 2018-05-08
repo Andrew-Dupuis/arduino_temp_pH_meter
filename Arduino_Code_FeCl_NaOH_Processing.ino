@@ -27,6 +27,12 @@ const byte SODIUM_HYDORXIDE_TEMPERATURE_ADDRESS[8] = {0x28, 0xFF, 0xA4, 0x1D, 0x
 const int SODIUM_HYDORXIDE_PH_PIN = A0;
 const int LCD_RS = 12, LCD_EN = 11, LCD_D4 = 5, LCD_D5 = 4, LCD_D6 = 3, LCD_D7 = 2;
 
+const float FERRIC_CHLORIDE_PROCESSING_P1 = 125;
+const float FERRIC_CHLORIDE_PROCESSING_P2 = 1.277;
+const float SODIUM_HYDORXIDE_PROCESSING_P1 = 0.3967;
+const float SODIUM_HYDORXIDE_PROCESSING_P2 = 13.23;
+
+
 // Variables
 bool isProcessSetupCompleted = false;
 float processingDuration;
@@ -180,9 +186,9 @@ void run_FeCl_process(float temperature, float pH) {
   lcd.setCursor(0, 1);
   lcd.print("Time: "); 
    
-  processingDuration = 10;
+  processingDuration = exp(FERRIC_CHLORIDE_PROCESSING_P1/temperature) + exp(FERRIC_CHLORIDE_PROCESSING_P2);
   
-  if(processingDuration > 0){
+  if(processingDuration > 0 && temperature > 0){
     lcd.print(processingDuration);
   }
   else{
@@ -192,6 +198,9 @@ void run_FeCl_process(float temperature, float pH) {
   bool completed = false;
   while (completed == false) {
     if (check_keypad(keypad) == KEYPAD_START_CHARACTER) {
+        if(processingDuration < 0 || temperature < 0){
+            break;
+        }
         do_countdown(processingDuration);
         completed = true;
         break;
@@ -217,9 +226,9 @@ void run_NaOH_process(float temperature, float pH) {
   lcd.setCursor(0, 1);
   lcd.print("Time: ");  
   
-  processingDuration = 0.3967 / (pH - 13.23);
+  processingDuration = SODIUM_HYDORXIDE_PROCESSING_P1 / (pH - SODIUM_HYDORXIDE_PROCESSING_P2);
 
-  if(processingDuration > 0){
+  if(processingDuration > 0 && temperature > 0){
     lcd.print(processingDuration);
   }
   else{
