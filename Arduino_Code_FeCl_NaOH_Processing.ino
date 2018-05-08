@@ -186,7 +186,7 @@ void run_FeCl_process(float temperature, float pH) {
   lcd.setCursor(0, 1);
   lcd.print("Time: "); 
    
-  processingDuration = exp(FERRIC_CHLORIDE_PROCESSING_P1/temperature) + exp(FERRIC_CHLORIDE_PROCESSING_P2);
+  processingDuration = exp(FERRIC_CHLORIDE_PROCESSING_P1/temperature) + exp(FERRIC_CHLORIDE_PROCESSING_P2);  // Ferric Chloride EQUATION
   
   if(processingDuration > 0 && temperature > 0){
     lcd.print(processingDuration);
@@ -226,7 +226,7 @@ void run_NaOH_process(float temperature, float pH) {
   lcd.setCursor(0, 1);
   lcd.print("Time: ");  
   
-  processingDuration = SODIUM_HYDORXIDE_PROCESSING_P1 / (pH - SODIUM_HYDORXIDE_PROCESSING_P2);
+  processingDuration = SODIUM_HYDORXIDE_PROCESSING_P1 / (pH - SODIUM_HYDORXIDE_PROCESSING_P2);  // Sodium Hydroxide EQUATION
 
   if(processingDuration > 0 && temperature > 0){
     lcd.print(processingDuration);
