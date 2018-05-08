@@ -21,7 +21,7 @@ const char KEYPAD_CANCEL_CHARACTER = '*';
 const char KEYPAD_START_CHARACTER = '#';
 
 const int TEMPERATURE_ONEWIRE_PIN = 28;
-const byte FERRIC_CHLORIDE_TEMPERATURE_ADDRESS[8] = {0x28, 0xFF, 0x25, 0x20, 0xB0, 0x17, 0x05, 0x13};
+const byte FERRIC_CHLORIDE_TEMPERATURE_ADDRESS[8] = {0x28, 0xFF, 0x57, 0x14, 0xB0, 0x17, 0x05, 0xBB};
 const int FERRIC_CHLORIDE_PH_PIN = A1;
 const byte SODIUM_HYDORXIDE_TEMPERATURE_ADDRESS[8] = {0x28, 0xFF, 0xA4, 0x1D, 0xB0, 0x17, 0x05, 0xC0};
 const int SODIUM_HYDORXIDE_PH_PIN = A0;
@@ -29,8 +29,8 @@ const int LCD_RS = 12, LCD_EN = 11, LCD_D4 = 5, LCD_D5 = 4, LCD_D6 = 3, LCD_D7 =
 
 const float FERRIC_CHLORIDE_PROCESSING_P1 = 125;
 const float FERRIC_CHLORIDE_PROCESSING_P2 = 1.277;
-const float SODIUM_HYDORXIDE_PROCESSING_P1 = 0.3967;
-const float SODIUM_HYDORXIDE_PROCESSING_P2 = 13.23;
+const float SODIUM_HYDORXIDE_PROCESSING_P1 = 2.723;
+const float SODIUM_HYDORXIDE_PROCESSING_P2 = -.3611;
 
 
 // Variables
@@ -186,7 +186,7 @@ void run_FeCl_process(float temperature, float pH) {
   lcd.setCursor(0, 1);
   lcd.print("Time: "); 
    
-  processingDuration = exp(FERRIC_CHLORIDE_PROCESSING_P1/temperature) + exp(FERRIC_CHLORIDE_PROCESSING_P2);  // Ferric Chloride EQUATION
+  processingDuration = exp(FERRIC_CHLORIDE_PROCESSING_P1/(temperature-9)) + exp(FERRIC_CHLORIDE_PROCESSING_P2);  // Ferric Chloride EQUATION
   
   if(processingDuration > 0 && temperature > 0){
     lcd.print(processingDuration);
@@ -225,8 +225,9 @@ void run_NaOH_process(float temperature, float pH) {
   lcd.print(pH);
   lcd.setCursor(0, 1);
   lcd.print("Time: ");  
-  
-  processingDuration = SODIUM_HYDORXIDE_PROCESSING_P1 / (pH - SODIUM_HYDORXIDE_PROCESSING_P2);  // Sodium Hydroxide EQUATION
+
+  processingDuration = 1/(SODIUM_HYDORXIDE_PROCESSING_P1*pow(10,pH-14)+SODIUM_HYDORXIDE_PROCESSING_P2);
+  //processingDuration = SODIUM_HYDORXIDE_PROCESSING_P1 / (pH - SODIUM_HYDORXIDE_PROCESSING_P2);  // Sodium Hydroxide EQUATION
 
   if(processingDuration > 0 && temperature > 0){
     lcd.print(processingDuration);
